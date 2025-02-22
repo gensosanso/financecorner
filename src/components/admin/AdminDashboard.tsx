@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { DataTable } from "@/components/ui/data-table";
+import {
+  depositColumns,
+  transactionColumns,
+  lendingOfferColumns,
+  lendingContractColumns,
+} from "./tables/columns";
 import {
   Table,
   TableBody,
@@ -10,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AdminSidebar from "./AdminSidebar";
 
 type Transaction = {
   id: string;
@@ -19,6 +26,17 @@ type Transaction = {
   status: string;
   created_at: string;
   profiles: { email: string };
+};
+
+type CryptoTransaction = {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  amount: number;
+  status: string;
+  created_at: string;
+  sender: { email: string };
+  recipient: { email: string };
 };
 
 type LendingOffer = {
@@ -49,17 +67,16 @@ type LendingContract = {
   };
 };
 
-import AdminSidebar from "./AdminSidebar";
-
 export default function AdminDashboard() {
   const [currentPath, setCurrentPath] = useState("/admin/deposits");
   const [deposits, setDeposits] = useState<Transaction[]>([]);
   const [withdrawals, setWithdrawals] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [transactions, setTransactions] = useState<CryptoTransaction[]>([]);
   const [lendingOffers, setLendingOffers] = useState<LendingOffer[]>([]);
   const [lendingContracts, setLendingContracts] = useState<LendingContract[]>(
     [],
   );
+  const [loading, setLoading] = useState(true);
 
   const fetchTransactions = async () => {
     setLoading(true);
@@ -74,6 +91,13 @@ export default function AdminDashboard() {
       .select("*, profiles(email)")
       .order("created_at", { ascending: false });
 
+    const { data: transactionsData } = await supabase
+      .from("transactions")
+      .select(
+        "*, sender:profiles!transactions_sender_id_fkey(email), recipient:profiles!transactions_recipient_id_fkey(email)",
+      )
+      .order("created_at", { ascending: false });
+
     const { data: offersData } = await supabase
       .from("lending_offers")
       .select("*, profiles(email)")
@@ -86,6 +110,7 @@ export default function AdminDashboard() {
 
     if (depositsData) setDeposits(depositsData);
     if (withdrawalsData) setWithdrawals(withdrawalsData);
+    if (transactionsData) setTransactions(transactionsData);
     if (offersData) setLendingOffers(offersData);
     if (contractsData) setLendingContracts(contractsData);
     setLoading(false);
@@ -112,6 +137,15 @@ export default function AdminDashboard() {
       )
       .subscribe();
 
+    const transactionsSubscription = supabase
+      .channel("transactions_changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "transactions" },
+        fetchTransactions,
+      )
+      .subscribe();
+
     const lendingSubscription = supabase
       .channel("lending_changes")
       .on(
@@ -129,6 +163,7 @@ export default function AdminDashboard() {
     return () => {
       depositsSubscription.unsubscribe();
       withdrawalsSubscription.unsubscribe();
+      transactionsSubscription.unsubscribe();
       lendingSubscription.unsubscribe();
     };
   }, []);
@@ -226,31 +261,42 @@ export default function AdminDashboard() {
     </Table>
   );
 
-  if (loading) return <div>Loading...</div>;
-
   const renderContent = () => {
     switch (currentPath) {
       case "/admin/deposits":
         return (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Deposits</h2>
-            <TransactionTable data={deposits} type="deposits" />
+            <DataTable
+              columns={depositColumns}
+              data={deposits}
+              filterColumn="profiles.email"
+              filterPlaceholder="Filter by email..."
+            />
           </div>
         );
       case "/admin/withdrawals":
         return (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Withdrawals</h2>
-            <TransactionTable data={withdrawals} type="withdrawals" />
+            <DataTable
+              columns={depositColumns}
+              data={withdrawals}
+              filterColumn="profiles.email"
+              filterPlaceholder="Filter by email..."
+            />
           </div>
         );
       case "/admin/transactions":
         return (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Transactions</h2>
-            <p className="text-muted-foreground">
-              Transaction history coming soon...
-            </p>
+            <h2 className="text-2xl font-bold">Transaction History</h2>
+            <DataTable
+              columns={transactionColumns}
+              data={transactions}
+              filterColumn="sender.email"
+              filterPlaceholder="Filter by sender email..."
+            />
           </div>
         );
       case "/admin/lending":
@@ -258,88 +304,22 @@ export default function AdminDashboard() {
           <div className="space-y-8">
             <div className="space-y-4">
               <h2 className="text-2xl font-bold">Active Lending Offers</h2>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Lender</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Interest Rate</TableHead>
-                    <TableHead>Duration</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {lendingOffers.map((offer) => (
-                    <TableRow key={offer.id}>
-                      <TableCell>{offer.profiles?.email}</TableCell>
-                      <TableCell>${offer.amount}</TableCell>
-                      <TableCell>{offer.interest_rate}%</TableCell>
-                      <TableCell>{offer.duration_days} days</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            offer.status === "active" ? "default" : "secondary"
-                          }
-                        >
-                          {offer.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(offer.created_at).toLocaleDateString()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <DataTable
+                columns={lendingOfferColumns}
+                data={lendingOffers}
+                filterColumn="profiles.email"
+                filterPlaceholder="Filter by lender email..."
+              />
             </div>
 
             <div className="space-y-4">
               <h2 className="text-2xl font-bold">Active Lending Contracts</h2>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Lender</TableHead>
-                    <TableHead>Borrower</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Interest Rate</TableHead>
-                    <TableHead>Duration</TableHead>
-                    <TableHead>Start Date</TableHead>
-                    <TableHead>End Date</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {lendingContracts.map((contract) => (
-                    <TableRow key={contract.id}>
-                      <TableCell>
-                        {contract.lending_offers?.profiles?.email}
-                      </TableCell>
-                      <TableCell>{contract.profiles?.email}</TableCell>
-                      <TableCell>${contract.amount}</TableCell>
-                      <TableCell>{contract.interest_rate}%</TableCell>
-                      <TableCell>{contract.duration_days} days</TableCell>
-                      <TableCell>
-                        {new Date(contract.start_date).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        {new Date(contract.end_date).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            contract.status === "active"
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {contract.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <DataTable
+                columns={lendingContractColumns}
+                data={lendingContracts}
+                filterColumn="profiles.email"
+                filterPlaceholder="Filter by borrower email..."
+              />
             </div>
           </div>
         );
@@ -347,6 +327,8 @@ export default function AdminDashboard() {
         return null;
     }
   };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="min-h-screen bg-background pt-[72px] flex">
