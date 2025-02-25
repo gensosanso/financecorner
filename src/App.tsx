@@ -4,6 +4,7 @@ import Home from "./components/home";
 import Dashboard from "./components/dashboard/Dashboard";
 import { useAuth } from "./contexts/AuthContext";
 import AdminDashboard from "./components/admin/AdminDashboard";
+import TradingPage from "./components/trading/TradingPage";
 import routes from "tempo-routes";
 
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
@@ -14,7 +15,8 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user) {
-    return <Navigate to="/" />;
+    // Pass state to indicate we want to show the login modal
+    return <Navigate to="/" state={{ showLogin: true }} replace />;
   }
 
   return <>{children}</>;
@@ -39,6 +41,14 @@ function App() {
             element={
               <RequireAuth>
                 <AdminDashboard />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/trading"
+            element={
+              <RequireAuth>
+                <TradingPage />
               </RequireAuth>
             }
           />

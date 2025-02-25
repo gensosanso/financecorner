@@ -41,7 +41,10 @@ const Navbar = ({
               <NavigationMenuTrigger>Products</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="grid gap-3 p-4 w-[400px]">
-                  <NavigationMenuLink className="block p-3 hover:bg-accent rounded-md">
+                  <NavigationMenuLink
+                    className="block p-3 hover:bg-accent rounded-md cursor-pointer"
+                    onClick={() => (window.location.href = "/trading")}
+                  >
                     <div className="font-medium">Trading</div>
                     <p className="text-sm text-muted-foreground">
                       Buy and sell cryptocurrencies
