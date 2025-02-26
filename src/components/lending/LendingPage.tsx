@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
+import Navbar from "../navigation/Navbar";
+import Footer from "../landing/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
 import {
   Table,
@@ -18,6 +21,7 @@ import BorrowModal from "../dashboard/BorrowModal";
 
 const LendingPage = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [isLendingModalOpen, setIsLendingModalOpen] = useState(false);
   const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
   const [balance, setBalance] = useState(0);
@@ -62,19 +66,20 @@ const LendingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pt-[72px] px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background">
+      <Navbar isAuthenticated={!!user} />
       <div className="max-w-7xl mx-auto py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Crypto Lending</h1>
+          <h1 className="text-3xl font-bold">{t("lending.title")}</h1>
           <div className="flex gap-4">
             <Button onClick={() => setIsLendingModalOpen(true)}>
-              Create Lending Offer
+              {t("lending.create")}
             </Button>
             <Button
               variant="outline"
               onClick={() => setIsBorrowModalOpen(true)}
             >
-              View Borrowing Options
+              {t("lending.view")}
             </Button>
           </div>
         </div>
@@ -82,11 +87,13 @@ const LendingPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Active Loans */}
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Your Active Loans</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              {t("lending.active.loans")}
+            </h2>
             <div className="space-y-4">
               {activeLoans.length === 0 ? (
                 <p className="text-muted-foreground text-center py-8">
-                  No active loans
+                  {t("lending.no.loans")}
                 </p>
               ) : (
                 <Table>
@@ -120,11 +127,13 @@ const LendingPage = () => {
 
           {/* Active Borrows */}
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Your Active Borrows</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              {t("lending.active.borrows")}
+            </h2>
             <div className="space-y-4">
               {activeBorrows.length === 0 ? (
                 <p className="text-muted-foreground text-center py-8">
-                  No active borrows
+                  {t("lending.no.borrows")}
                 </p>
               ) : (
                 <Table>
@@ -169,6 +178,7 @@ const LendingPage = () => {
           onSuccess={fetchUserData}
         />
       </div>
+      <Footer />
     </div>
   );
 };

@@ -16,6 +16,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Search } from "lucide-react";
+import Navbar from "../navigation/Navbar";
+import Footer from "../landing/Footer";
+import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const faqs = [
   {
@@ -46,6 +50,8 @@ const faqs = [
 ];
 
 const SupportPage = () => {
+  const { user } = useAuth();
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredFaqs = faqs.filter(
@@ -55,17 +61,16 @@ const SupportPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background pt-[72px] px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto py-8">
+    <div className="min-h-screen bg-background">
+      <Navbar isAuthenticated={!!user} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold mb-4">How can we help you?</h1>
-          <p className="text-muted-foreground mb-6">
-            Search our help center or contact our support team
-          </p>
+          <h1 className="text-3xl font-bold mb-4">{t("support.title")}</h1>
+          <p className="text-muted-foreground mb-6">{t("support.subtitle")}</p>
           <div className="max-w-md mx-auto relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search for help..."
+              placeholder={t("support.search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -76,10 +81,8 @@ const SupportPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <Card>
             <CardHeader>
-              <CardTitle>Contact Support</CardTitle>
-              <CardDescription>
-                Send us a message and we'll get back to you as soon as possible
-              </CardDescription>
+              <CardTitle>{t("support.contact")}</CardTitle>
+              <CardDescription>{t("support.contact.desc")}</CardDescription>
             </CardHeader>
             <CardContent>
               <form className="space-y-4">
@@ -149,6 +152,7 @@ const SupportPage = () => {
           </Accordion>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

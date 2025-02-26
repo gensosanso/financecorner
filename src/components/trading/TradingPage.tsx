@@ -1,20 +1,25 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
+import Navbar from "../navigation/Navbar";
+import Footer from "../landing/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TradingChart from "./TradingChart";
 import OrderBook from "./OrderBook";
 import TradeHistory from "./TradeHistory";
 import TradingForm from "./TradingForm";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export type OrderType = "buy" | "sell";
 
 const TradingPage = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [selectedPair, setSelectedPair] = useState("BTC/USD");
 
   return (
-    <div className="min-h-screen bg-background pt-[72px] px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background">
+      <Navbar isAuthenticated={!!user} />
       <div className="max-w-[1600px] mx-auto py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Left Column - Chart & Order Book */}
@@ -29,7 +34,7 @@ const TradingPage = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">
-                    24h Volume:
+                    {t("trading.volume")}
                   </span>
                   <span className="font-medium">$1.2B</span>
                 </div>
@@ -45,8 +50,12 @@ const TradingPage = () => {
             <Card className="p-4">
               <Tabs defaultValue="order-book">
                 <TabsList className="mb-4">
-                  <TabsTrigger value="order-book">Order Book</TabsTrigger>
-                  <TabsTrigger value="trade-history">Trade History</TabsTrigger>
+                  <TabsTrigger value="order-book">
+                    {t("trading.orderbook")}
+                  </TabsTrigger>
+                  <TabsTrigger value="trade-history">
+                    {t("trading.history")}
+                  </TabsTrigger>
                 </TabsList>
                 <TabsContent value="order-book">
                   <OrderBook />
@@ -66,14 +75,15 @@ const TradingPage = () => {
 
             {/* User's Open Orders */}
             <Card className="p-4">
-              <h3 className="font-semibold mb-4">Open Orders</h3>
+              <h3 className="font-semibold mb-4">{t("trading.open.orders")}</h3>
               <div className="text-sm text-muted-foreground text-center py-8">
-                No open orders
+                {t("trading.no.orders")}
               </div>
             </Card>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

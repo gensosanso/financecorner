@@ -7,42 +7,47 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Navbar from "../navigation/Navbar";
+import Footer from "../landing/Footer";
+import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const LearnPage = () => {
+  const { user } = useAuth();
+  const { t } = useLanguage();
+
   return (
-    <div className="min-h-screen bg-background pt-[72px] px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-8">Learn Crypto Trading</h1>
+    <div className="min-h-screen bg-background">
+      <Navbar isAuthenticated={!!user} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-3xl font-bold mb-8">{t("learn.title")}</h1>
 
         <Tabs defaultValue="basics" className="space-y-8">
           <TabsList className="w-full justify-start">
-            <TabsTrigger value="basics">Basics</TabsTrigger>
-            <TabsTrigger value="trading">Trading</TabsTrigger>
-            <TabsTrigger value="defi">DeFi</TabsTrigger>
-            <TabsTrigger value="security">Security</TabsTrigger>
+            <TabsTrigger value="basics">{t("learn.basics")}</TabsTrigger>
+            <TabsTrigger value="trading">{t("learn.trading")}</TabsTrigger>
+            <TabsTrigger value="defi">{t("learn.defi")}</TabsTrigger>
+            <TabsTrigger value="security">{t("learn.security")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="basics" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>What is Cryptocurrency?</CardTitle>
+                <CardTitle>{t("learn.what.is.crypto")}</CardTitle>
                 <CardDescription>
-                  Understanding the fundamentals of digital currencies
+                  {t("learn.what.is.crypto.desc")}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p>
-                  Cryptocurrency is a digital or virtual form of currency that
-                  uses cryptography for security. Unlike traditional currencies,
-                  cryptocurrencies are typically decentralized systems based on
-                  blockchain technology.
-                </p>
-                <h3 className="text-lg font-semibold mt-4">Key Concepts:</h3>
+                <p>{t("learn.what.is.crypto.content")}</p>
+                <h3 className="text-lg font-semibold mt-4">
+                  {t("learn.key.concepts")}
+                </h3>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Blockchain Technology</li>
-                  <li>Decentralization</li>
-                  <li>Digital Wallets</li>
-                  <li>Public and Private Keys</li>
+                  <li>{t("learn.blockchain")}</li>
+                  <li>{t("learn.decentralization")}</li>
+                  <li>{t("learn.wallets")}</li>
+                  <li>{t("learn.keys")}</li>
                 </ul>
               </CardContent>
             </Card>
@@ -179,6 +184,7 @@ const LearnPage = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <Footer />
     </div>
   );
 };

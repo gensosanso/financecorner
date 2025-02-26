@@ -11,6 +11,8 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { useTheme } from "@/components/theme-provider";
+import { useLanguage } from "@/contexts/LanguageContext";
+import LanguageSelector from "./LanguageSelector";
 
 interface NavbarProps {
   onLoginClick?: () => void;
@@ -27,6 +29,7 @@ const Navbar = ({
     setTheme: () => {},
     theme: "light",
   };
+  const { t } = useLanguage();
 
   return (
     <nav className="w-full h-[72px] px-6 border-b bg-background flex items-center justify-between fixed top-0 z-50">
@@ -38,25 +41,25 @@ const Navbar = ({
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+              <NavigationMenuTrigger>{t("nav.products")}</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="grid gap-3 p-4 w-[400px]">
                   <NavigationMenuLink
                     className="block p-3 hover:bg-accent rounded-md cursor-pointer"
                     onClick={() => (window.location.href = "/trading")}
                   >
-                    <div className="font-medium">Trading</div>
+                    <div className="font-medium">{t("nav.trading")}</div>
                     <p className="text-sm text-muted-foreground">
-                      Buy and sell cryptocurrencies
+                      {t("nav.trading.desc")}
                     </p>
                   </NavigationMenuLink>
                   <NavigationMenuLink
                     className="block p-3 hover:bg-accent rounded-md cursor-pointer"
                     onClick={() => (window.location.href = "/lending")}
                   >
-                    <div className="font-medium">Lending</div>
+                    <div className="font-medium">{t("nav.lending")}</div>
                     <p className="text-sm text-muted-foreground">
-                      Earn interest on your assets
+                      {t("nav.lending.desc")}
                     </p>
                   </NavigationMenuLink>
                 </div>
@@ -64,25 +67,27 @@ const Navbar = ({
             </NavigationMenuItem>
 
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+              <NavigationMenuTrigger>
+                {t("nav.resources")}
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="grid gap-3 p-4 w-[400px]">
                   <NavigationMenuLink
                     className="block p-3 hover:bg-accent rounded-md cursor-pointer"
                     onClick={() => (window.location.href = "/learn")}
                   >
-                    <div className="font-medium">Learn</div>
+                    <div className="font-medium">{t("nav.learn")}</div>
                     <p className="text-sm text-muted-foreground">
-                      Educational resources
+                      {t("nav.learn.desc")}
                     </p>
                   </NavigationMenuLink>
                   <NavigationMenuLink
                     className="block p-3 hover:bg-accent rounded-md cursor-pointer"
                     onClick={() => (window.location.href = "/support")}
                   >
-                    <div className="font-medium">Support</div>
+                    <div className="font-medium">{t("nav.support")}</div>
                     <p className="text-sm text-muted-foreground">
-                      Help center and documentation
+                      {t("nav.support.desc")}
                     </p>
                   </NavigationMenuLink>
                 </div>
@@ -93,6 +98,7 @@ const Navbar = ({
       </div>
 
       <div className="flex items-center gap-4">
+        <LanguageSelector />
         <Button
           variant="ghost"
           size="icon"
@@ -108,9 +114,9 @@ const Navbar = ({
         {!isAuthenticated ? (
           <>
             <Button variant="ghost" onClick={onLoginClick}>
-              Login
+              {t("nav.login")}
             </Button>
-            <Button onClick={onSignUpClick}>Sign Up</Button>
+            <Button onClick={onSignUpClick}>{t("nav.signup")}</Button>
           </>
         ) : (
           <>
@@ -118,7 +124,7 @@ const Navbar = ({
               variant="ghost"
               onClick={() => (window.location.href = "/dashboard")}
             >
-              Dashboard
+              {t("nav.dashboard")}
             </Button>
             <Button
               variant="ghost"
@@ -129,7 +135,7 @@ const Navbar = ({
               className="gap-2"
             >
               <LogOut className="h-4 w-4" />
-              Sign Out
+              {t("nav.signout")}
             </Button>
           </>
         )}
