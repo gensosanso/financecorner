@@ -20,7 +20,7 @@ const TradingPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar isAuthenticated={!!user} />
-      <div className="max-w-[1600px] mx-auto py-6">
+      <div className="max-w-[1600px] mx-auto py-24">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Left Column - Chart & Order Book */}
           <div className="lg:col-span-3 space-y-6">
