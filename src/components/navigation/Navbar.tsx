@@ -50,7 +50,10 @@ const Navbar = ({
                       Buy and sell cryptocurrencies
                     </p>
                   </NavigationMenuLink>
-                  <NavigationMenuLink className="block p-3 hover:bg-accent rounded-md">
+                  <NavigationMenuLink
+                    className="block p-3 hover:bg-accent rounded-md cursor-pointer"
+                    onClick={() => (window.location.href = "/lending")}
+                  >
                     <div className="font-medium">Lending</div>
                     <p className="text-sm text-muted-foreground">
                       Earn interest on your assets
@@ -64,13 +67,19 @@ const Navbar = ({
               <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="grid gap-3 p-4 w-[400px]">
-                  <NavigationMenuLink className="block p-3 hover:bg-accent rounded-md">
+                  <NavigationMenuLink
+                    className="block p-3 hover:bg-accent rounded-md cursor-pointer"
+                    onClick={() => (window.location.href = "/learn")}
+                  >
                     <div className="font-medium">Learn</div>
                     <p className="text-sm text-muted-foreground">
                       Educational resources
                     </p>
                   </NavigationMenuLink>
-                  <NavigationMenuLink className="block p-3 hover:bg-accent rounded-md">
+                  <NavigationMenuLink
+                    className="block p-3 hover:bg-accent rounded-md cursor-pointer"
+                    onClick={() => (window.location.href = "/support")}
+                  >
                     <div className="font-medium">Support</div>
                     <p className="text-sm text-muted-foreground">
                       Help center and documentation

@@ -5,6 +5,9 @@ import Dashboard from "./components/dashboard/Dashboard";
 import { useAuth } from "./contexts/AuthContext";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import TradingPage from "./components/trading/TradingPage";
+import LendingPage from "./components/lending/LendingPage";
+import LearnPage from "./components/learn/LearnPage";
+import SupportPage from "./components/support/SupportPage";
 import routes from "tempo-routes";
 
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
@@ -52,6 +55,16 @@ function App() {
               </RequireAuth>
             }
           />
+          <Route
+            path="/lending"
+            element={
+              <RequireAuth>
+                <LendingPage />
+              </RequireAuth>
+            }
+          />
+          <Route path="/learn" element={<LearnPage />} />
+          <Route path="/support" element={<SupportPage />} />
         </Routes>
         {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
       </>
