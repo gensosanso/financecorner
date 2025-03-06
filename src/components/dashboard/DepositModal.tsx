@@ -10,12 +10,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface DepositModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
 }
+
+type PaymentMethod = "bank" | "crypto";
 
 export default function DepositModal({
   isOpen,
@@ -24,6 +33,7 @@ export default function DepositModal({
 }: DepositModalProps) {
   const { user } = useAuth();
   const [amount, setAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("bank");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,6 +46,7 @@ export default function DepositModal({
       const { error: depositError } = await supabase.from("deposits").insert({
         user_id: user.id,
         amount: parseFloat(amount),
+        payment_method: paymentMethod,
         status: "pending",
       });
 
@@ -67,6 +78,41 @@ export default function DepositModal({
               onChange={(e) => setAmount(e.target.value)}
             />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="payment-method">Payment Method</Label>
+            <Select
+              value={paymentMethod}
+              onValueChange={(value) =>
+                setPaymentMethod(value as PaymentMethod)
+              }
+            >
+              <SelectTrigger id="payment-method">
+                <SelectValue placeholder="Select payment method" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="bank">Bank Account</SelectItem>
+                <SelectItem value="crypto">Crypto Address</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          {paymentMethod === "bank" && (
+            <div className="space-y-2">
+              <Label htmlFor="bank-details">Bank Account Details</Label>
+              <Input
+                id="bank-details"
+                placeholder="Enter bank account number"
+              />
+            </div>
+          )}
+          {paymentMethod === "crypto" && (
+            <div className="space-y-2">
+              <Label htmlFor="crypto-address">Crypto Address</Label>
+              <Input
+                id="crypto-address"
+                placeholder="Enter your crypto wallet address"
+              />
+            </div>
+          )}
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button
             className="w-full"

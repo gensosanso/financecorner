@@ -10,6 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SendCryptoModalProps {
   isOpen: boolean;
@@ -17,14 +24,17 @@ interface SendCryptoModalProps {
   onSuccess?: () => void;
 }
 
+type PaymentMethod = "bank" | "crypto";
+
 export default function SendCryptoModal({
   isOpen,
   onClose,
   onSuccess,
 }: SendCryptoModalProps) {
   const { user } = useAuth();
-  const [recipientEmail, setRecipientEmail] = useState("");
   const [amount, setAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("bank");
+  const [recipientId, setRecipientId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,24 +44,14 @@ export default function SendCryptoModal({
     setError(null);
 
     try {
-      // Get recipient user ID
-      const { data: recipientData, error: recipientError } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("email", recipientEmail)
-        .single();
-
-      if (recipientError || !recipientData) {
-        throw new Error("Recipient not found");
-      }
-
       // Create transaction
       const { error: transactionError } = await supabase
         .from("transactions")
         .insert({
           sender_id: user.id,
-          recipient_id: recipientData.id,
+          recipient_id: recipientId || user.id, // Default to self if no recipient specified
           amount: parseFloat(amount),
+          payment_method: paymentMethod,
           status: "completed",
         });
 
@@ -68,16 +68,18 @@ export default function SendCryptoModal({
 
       if (senderWalletError) throw senderWalletError;
 
-      // Update recipient's wallet
-      const { error: recipientWalletError } = await supabase.rpc(
-        "update_wallet_balance",
-        {
-          user_id_input: recipientData.id,
-          amount_input: parseFloat(amount),
-        },
-      );
+      // Update recipient's wallet if different from sender
+      if (recipientId && recipientId !== user.id) {
+        const { error: recipientWalletError } = await supabase.rpc(
+          "update_wallet_balance",
+          {
+            user_id_input: recipientId,
+            amount_input: parseFloat(amount),
+          },
+        );
 
-      if (recipientWalletError) throw recipientWalletError;
+        if (recipientWalletError) throw recipientWalletError;
+      }
 
       onSuccess?.();
       onClose();
@@ -96,15 +98,6 @@ export default function SendCryptoModal({
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="recipient">Recipient Email</Label>
-            <Input
-              id="recipient"
-              placeholder="Enter recipient's email"
-              value={recipientEmail}
-              onChange={(e) => setRecipientEmail(e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
             <Label htmlFor="amount">Amount</Label>
             <Input
               id="amount"
@@ -114,11 +107,47 @@ export default function SendCryptoModal({
               onChange={(e) => setAmount(e.target.value)}
             />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="payment-method">Payment Method</Label>
+            <Select
+              value={paymentMethod}
+              onValueChange={(value) =>
+                setPaymentMethod(value as PaymentMethod)
+              }
+            >
+              <SelectTrigger id="payment-method">
+                <SelectValue placeholder="Select payment method" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="bank">Bank Account</SelectItem>
+                <SelectItem value="crypto">Crypto Address</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          {paymentMethod === "bank" && (
+            <div className="space-y-2">
+              <Label htmlFor="bank-details">Bank Account Details</Label>
+              <Input
+                id="bank-details"
+                placeholder="Enter bank account number"
+              />
+            </div>
+          )}
+          {paymentMethod === "crypto" && (
+            <div className="space-y-2">
+              <Label htmlFor="crypto-address">Crypto Address</Label>
+              <Input
+                id="crypto-address"
+                placeholder="Enter recipient's crypto wallet address"
+                onChange={(e) => setRecipientId(e.target.value)}
+              />
+            </div>
+          )}
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button
             className="w-full"
             onClick={handleSend}
-            disabled={loading || !amount || !recipientEmail}
+            disabled={loading || !amount}
           >
             {loading ? "Sending..." : "Send"}
           </Button>
