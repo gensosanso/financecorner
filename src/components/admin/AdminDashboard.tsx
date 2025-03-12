@@ -331,7 +331,7 @@ export default function AdminDashboard() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-background pt-[72px] flex">
+    <div className="min-h-screen bg-off-white pt-[72px] flex">
       <AdminSidebar currentPath={currentPath} onNavigate={setCurrentPath} />
       <div className="flex-1 px-8 py-8 overflow-auto">{renderContent()}</div>
     </div>

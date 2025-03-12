@@ -32,9 +32,9 @@ const Navbar = ({
   const { t } = useLanguage();
 
   return (
-    <nav className="w-full h-[72px] px-6 border-b bg-background flex items-center justify-between fixed top-0 z-50">
+    <nav className="w-full h-[72px] px-6 border-b border-gray-border bg-white/95 backdrop-blur-sm flex items-center justify-between fixed top-0 z-50 shadow-sm">
       <div className="flex items-center gap-6">
-        <a href="/" className="text-2xl font-bold text-primary">
+        <a href="/" className="text-2xl font-bold text-blue-deep">
           CryptoEx
         </a>
 
@@ -122,7 +122,11 @@ const Navbar = ({
           <>
             <Button
               variant="ghost"
-              onClick={() => (window.location.href = "/dashboard")}
+              onClick={() => {
+                // Preserve language when navigating
+                const currentLang = localStorage.getItem("language") || "en";
+                window.location.href = `/dashboard?lang=${currentLang}`;
+              }}
             >
               {t("nav.dashboard")}
             </Button>

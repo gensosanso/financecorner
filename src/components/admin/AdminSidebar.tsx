@@ -41,9 +41,11 @@ export default function AdminSidebar({
   onNavigate,
 }: AdminSidebarProps) {
   return (
-    <div className="w-64 min-h-screen bg-card border-r px-3 py-4 space-y-2">
+    <div className="w-64 min-h-screen bg-white border-r border-gray-border px-3 py-4 space-y-2 shadow-sm">
       <div className="px-3 py-2">
-        <h2 className="mb-2 px-4 text-lg font-semibold">Admin Panel</h2>
+        <h2 className="mb-2 px-4 text-lg font-semibold text-blue-deep">
+          Admin Panel
+        </h2>
       </div>
       <nav className="space-y-1">
         {navItems.map((item) => {

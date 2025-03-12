@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom";
 import Navbar from "./navigation/Navbar";
 import HeroSection from "./landing/HeroSection";
 import FeaturesGrid from "./landing/FeaturesGrid";
+import TestimonialsSection from "./landing/TestimonialsSection";
+import StatisticsSection from "./landing/StatisticsSection";
 import Footer from "./landing/Footer";
 import AuthModal from "./auth/AuthModal";
 import { useAuth } from "@/contexts/AuthContext";
@@ -50,9 +52,13 @@ const Home = () => {
           }}
         />
 
+        <StatisticsSection />
+
         <div id="features">
           <FeaturesGrid />
         </div>
+
+        <TestimonialsSection />
       </main>
 
       <Footer />

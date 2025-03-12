@@ -63,7 +63,7 @@ const HeroSection = ({
   const finalPrimaryCTA = primaryCTA || defaultPrimaryCTA;
   const finalSecondaryCTA = secondaryCTA || defaultSecondaryCTA;
   return (
-    <section className="w-full h-[600px] bg-background flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <section className="w-full h-[600px] bg-gradient-to-br from-blue-deep via-blue-medium to-blue-light/30 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -71,21 +71,25 @@ const HeroSection = ({
           transition={{ duration: 0.5 }}
           className="flex-1 text-center lg:text-left"
         >
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-primary mb-6">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">
             {finalTitle}
           </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl">
+          <p className="text-lg sm:text-xl text-gray-light mb-8 max-w-2xl">
             {finalSubtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-            <Button size="lg" onClick={onPrimaryClick} className="text-lg px-8">
+            <Button
+              size="lg"
+              onClick={onPrimaryClick}
+              className="text-lg px-8 bg-accent hover:bg-accent/90 text-almost-black font-semibold"
+            >
               {finalPrimaryCTA}
             </Button>
             <Button
               size="lg"
               variant="outline"
               onClick={onSecondaryClick}
-              className="text-lg px-8"
+              className="text-lg px-8 border-white text-white hover:bg-white/10"
             >
               {finalSecondaryCTA}
             </Button>
@@ -100,11 +104,11 @@ const HeroSection = ({
         >
           <div className="relative w-full max-w-[500px] aspect-square mx-auto">
             <img
-              src="https://images.unsplash.com/photo-1621761191319-c6fb62004040?auto=format&fit=crop&q=80"
+              src="https://images.unsplash.com/photo-1621761191319-c6fb62004040?auto=format&fit=crop&q=80&w=800"
               alt="Crypto Trading Platform"
-              className="rounded-2xl shadow-2xl object-cover"
+              className="rounded-2xl shadow-2xl object-cover border-4 border-white/20"
             />
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent rounded-2xl" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-blue-deep/40 to-transparent rounded-2xl" />
           </div>
         </motion.div>
       </div>

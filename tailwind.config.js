@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -51,6 +51,32 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // New functional colors
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(0 0% 100%)",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(0 0% 0%)",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(0 0% 100%)",
+        },
+        // Custom color values for direct use
+        "blue-deep": "#144272",
+        "blue-medium": "#2C74B3",
+        "blue-light": "#5DA3FA",
+        turquoise: "#00B8A9",
+        coral: "#F8485E",
+        gold: "#FFD369",
+        sky: "#40A2E3",
+        "off-white": "#F8F9FA",
+        "gray-light": "#EDF2F7",
+        "gray-border": "#D1D9E6",
+        "almost-black": "#1E2A3B",
+        "gray-dark": "#64748B",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -74,4 +100,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

@@ -24,13 +24,17 @@ const ActionCard = ({
   onClick,
 }: ActionCardProps) => {
   return (
-    <Card className="w-full bg-card hover:shadow-lg transition-shadow duration-300">
+    <Card className="w-full bg-white border-gray-border hover:shadow-lg transition-all duration-300 hover:border-blue-medium">
       <CardHeader>
-        <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-          <Icon className="w-6 h-6 text-primary" />
+        <div className="w-12 h-12 rounded-lg bg-blue-light/10 flex items-center justify-center mb-4">
+          <Icon className="w-6 h-6 text-blue-medium" />
         </div>
-        <CardTitle className="text-xl font-semibold">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="text-xl font-semibold text-blue-deep">
+          {title}
+        </CardTitle>
+        <CardDescription className="text-gray-dark">
+          {description}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Button onClick={onClick} className="w-full">
